@@ -1,10 +1,9 @@
 import rclpy
 import time
+import launch
+import unittest
 import pytest
 from launch import LaunchDescription
-from rclpy.node import Node
-from std_msgs.msg import Bool
-from sensor_msgs.msg import JointState
 
 
 def ReadyToTest():
@@ -23,17 +22,23 @@ def generate_test_description():
         output="screen",
     )
 
-    return LaunchDescription([ReadyToTest(), test_server, action_relay])
+    return LaunchDescription(
+        [ReadyToTest(), test_server, action_relay()]
+    )
 
 
 def test_arm_status_evaluation(self):
-    """Check the result from different joint states"""
     # Create status callback to verify result
     arm_stowed_msg = None
 
     def arm_status_cb(msg):
         nonlocal arm_stowed_msg
         arm_stowed_msg = msg
+        # Process the received message here
+        if arm_stowed_msg.data:
+            print("Arm is stowed")
+        else:
+            print("Arm is not stowed")
 
     arm_status_sub = self.node.create_subscription(
         Bool,
@@ -72,3 +77,8 @@ def test_arm_status_evaluation(self):
         rclpy.spin_once(self.node, timeout_sec=0.1)
 
     self.assertTrue(arm_stowed_msg.data)
+
+    # Use arm_status_sub and arm_status_received here if needed
+    # ...
+
+    return LaunchDescription([ReadyToTest(), test_server, action_relay()])
