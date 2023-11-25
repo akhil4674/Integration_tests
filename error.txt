@@ -1,18 +1,9 @@
-./test/launch_integration_test.py:18:31: F821 undefined name 'ReadyToTest'
-    return LaunchDescription([ReadyToTest(), test_server, action_relay])
-                              ^
-
-./test/launch_integration_test.py:18:59: F821 undefined name 'action_relay'
-    return LaunchDescription([ReadyToTest(), test_server, action_relay])
-                                                          ^
-
-./test/launch_integration_test.py:30:5: F841 local variable 'arm_status_sub' is assigned to but never used
+./test/launch_integration_test.py:38:5: F841 local variable 'arm_status_sub' is assigned to but never used
     arm_status_sub = self.node.create_subscription(
     ^
 
-./test/launch_integration_test.py:61:5: F841 local variable 'arm_status_received' is assigned to but never used
+./test/launch_integration_test.py:69:5: F841 local variable 'arm_status_received' is assigned to but never used
     arm_status_received = False
     ^
 
-2     F821 undefined name 'ReadyToTest'
 2     F841 local variable 'arm_status_sub' is assigned to but never used
