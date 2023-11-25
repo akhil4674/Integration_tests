@@ -24,7 +24,6 @@ def generate_test_description():
 
 def test_arm_status_evaluation():
     """Check the result from different joint states."""
-
     # Create status callback to verify result
     arm_stowed_msg = None
 
@@ -32,17 +31,21 @@ def test_arm_status_evaluation():
         nonlocal arm_stowed_msg
         arm_stowed_msg = msg
 
-    # Create a node for subscribing to the arm stowed status topic
-    with rclpy.node.Node("test_node") as node:
-        arm_stowed_sub = node.create_subscription(
-            Bool,
-            "/arm_gripper_status/arm_stowed",
-            arm_stowed_cb,
-            rclpy.qos.qos_profile_system_default,
-        )
+    node = rclpy.create_node("test_node")
 
-        # Start the status publisher within the same node
-        arm_stowed_pub = node.create_publisher(Bool, "/arm_gripper_status/arm_stowed", 1)
+    # Modify the topic name to match the one published by the status publisher
+    arm_stowed_sub = node.create_subscription(
+        Bool,
+        "/arm_gripper_status/arm_stowed",
+        arm_stowed_cb,
+        rclpy.qos.qos_profile_system_default,
+    )
+
+    # Start the status publisher
+    with rclpy.node.Node(name="status_publisher") as status_publisher_node:
+        arm_stowed_pub = status_publisher_node.create_publisher(
+            Bool, "/arm_gripper_status/arm_stowed", 1
+        )
 
         # Publish joint state
         joint_state_msg = JointState()
@@ -77,9 +80,8 @@ def test_arm_status_evaluation():
             assert arm_stowed_msg.data
             print("Test successful!")
         except AssertionError:
-            print(
-                "Test failed: 'arm_stowed' message not received or does not have the expected data."
-            )
+            print("Test failed: 'arm_stowed'  does not have the expected data.")
+
 
 if __name__ == "__main__":
     pytest.main(["-s"])
