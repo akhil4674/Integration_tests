@@ -5,6 +5,16 @@ import unittest
 import pytest
 from launch import LaunchDescription
 
+
+def ReadyToTest():
+    pass
+
+
+def action_relay():
+    pass
+
+
+@pytest.mark.launch_test
 def generate_test_description():
     test_server = Node(
         package="ros2_spot_arm_status",
@@ -13,21 +23,24 @@ def generate_test_description():
     )
 
     return LaunchDescription(
-        [ReadyToTest(), test_server, action_relay]
+        [ReadyToTest(), test_server, action_relay()]
     )
 
-def arm_status_evaluation_test():
-    """Check the result from different joint states"""
+
+def test_arm_status_evaluation(self):
     # Create status callback to verify result
     arm_stowed_msg = None
 
     def arm_status_cb(msg):
         nonlocal arm_stowed_msg
         arm_stowed_msg = msg
+        # Process the received message here
+        if arm_stowed_msg.data:
+            print("Arm is stowed")
+        else:
+            print("Arm is not stowed")
 
-    node = rclpy.create_node("arm_status_evaluation_node")
-
-    arm_status_sub = node.create_subscription(
+    arm_status_sub = self.node.create_subscription(
         Bool,
         "/spot/arm/is_stowed",
         arm_status_cb,
@@ -55,16 +68,17 @@ def arm_status_evaluation_test():
         -1.56974196434021,
     ]
 
-    node.publish("/joint_states", joint_state_msg)
+    self.node.publish("/joint_states", joint_state_msg)
 
     # Wait until the status has been evaluated
     arm_status_received = False
     end_time = time.time() + 5
     while arm_stowed_msg is None and time.time() < end_time:
-        rclpy.spin_once(node, timeout_sec=0.1)
+        rclpy.spin_once(self.node, timeout_sec=0.1)
 
-    assert arm_stowed_msg.data
+    self.assertTrue(arm_stowed_msg.data)
 
-if __name__ == "__main__":
-    generate_test_description()
-    arm_status_evaluation_test()
+    # Use arm_status_sub and arm_status_received here if needed
+    # ...
+
+    return LaunchDescription([ReadyToTest(), test_server, action_relay()])
