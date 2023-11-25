@@ -1,0 +1,60 @@
+./test/launch_integration_test.py:3:1: F401 'launch' imported but unused
+import launch
+^
+
+./test/launch_integration_test.py:4:1: F401 'unittest' imported but unused
+import unittest
+^
+
+./test/launch_integration_test.py:11:19: F821 undefined name 'Node'
+    test_server = Node(
+                  ^
+
+./test/launch_integration_test.py:17:31: F821 undefined name 'ReadyToTest'
+    return LaunchDescription([ReadyToTest(), test_server, action_relay])
+                              ^
+
+./test/launch_integration_test.py:17:59: F821 undefined name 'action_relay'
+    return LaunchDescription([ReadyToTest(), test_server, action_relay])
+                                                          ^
+
+./test/launch_integration_test.py:29:5: F841 local variable 'arm_status_sub' is assigned to but never used
+    arm_status_sub = self.node.create_subscription(
+    ^
+
+./test/launch_integration_test.py:30:9: F821 undefined name 'Bool'
+        Bool,
+        ^
+
+./test/launch_integration_test.py:37:23: F821 undefined name 'JointState'
+    joint_state_msg = JointState()
+                      ^
+
+./test/launch_integration_test.py:60:5: F841 local variable 'arm_status_received' is assigned to but never used
+    arm_status_received = False
+    ^
+
+2     F401 'launch' imported but unused
+5     F821 undefined name 'Node'
+2     F841 local variable 'arm_status_sub' is assigned to but never used
+
+8 files checked
+9 errors
+
+'F'-type errors: 9
+
+Checked files:
+
+* ./setup.py
+* ./spot_arm_status/__init__.py
+* ./spot_arm_status/spot_arm_status_pub.py
+* ./test/test_copyright.py
+* ./test/test_flake8.py
+* ./test/test_pep257.py
+* ./test/test_spot_arm_status_pub.py
+* ./test/launch_integration_test.py
+_________________________________ test_pep257 __________________________________
+test/test_pep257.py:23: in test_pep257
+    assert rc == 0, 'Found code style errors / warnings'
+E   AssertionError: Found code style errors / warnings
+E   assert 1 == 0
