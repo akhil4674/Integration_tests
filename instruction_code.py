@@ -1,45 +1,26 @@
-./test/launch_integration_test.py:3:1: F401 'launch' imported but unused
-import launch
-^
+def test_arm_status_evaluation(self):
+        """Check the result from different joint states"""
+        # Create status callback to verify result
+        arm_stowed_msg = None
 
-./test/launch_integration_test.py:4:1: F401 'unittest' imported but unused
-import unittest
-^
+        def arm_status_cb(msg):
+            nonlocal arm_stowed_msg
+            arm_stowed_msg = msg
 
-./test/launch_integration_test.py:19:19: F821 undefined name 'Node'
-    test_server = Node(
-                  ^
+        arm_status_sub = self.node.create_subscription(
+            Bool,
+            "/spot/arm/is_stowed",
+            arm_status_cb,
+            rclpy.qos.qos_profile_system_default,
+        )
 
-./test/launch_integration_test.py:43:5: F841 local variable 'arm_status_sub' is assigned to but never used
-    arm_status_sub = self.node.create_subscription(
-    ^
+        # Publish joint state
+        self.joint_state_pub.publish(joint_states_arm_stowed_gripper_open) # message must be created somewhere else
 
-./test/launch_integration_test.py:44:9: F821 undefined name 'Bool'
-        Bool,
-        ^
+        # Wait until the status has been evaluated
+        arm_status_received = False
+        end_time = time.time() + 5
+        while arm_stowed_msg is None and time.time() < end_time:
+            rclpy.spin_once(self.node, timeout_sec=0.1)
 
-./test/launch_integration_test.py:51:23: F821 undefined name 'JointState'
-    joint_state_msg = JointState()
-                      ^
-
-./test/launch_integration_test.py:74:5: F841 local variable 'arm_status_received' is assigned to but never used
-    arm_status_received = False
-    ^
-
-./test/launch_integration_test.py:84:46: F821 undefined name 'test_server'
-    return LaunchDescription([ReadyToTest(), test_server, action_relay()])                                             ^
-
-./test/launch_integration_test.py:84:75: W292 no newline at end of file
-    return LaunchDescription([ReadyToTest(), test_server, action_relay()])                                                                          ^
-
-2     F401 'launch' imported but unused
-4     F821 undefined name 'Node'
-2     F841 local variable 'arm_status_sub' is assigned to but never used
-1     W292 no newline at end of file
-
-8 files checked
-9 errors
-
-'F'-type errors: 8
-'W'-type errors: 1
-
+        self.assertTrue(arm_stowed_msg.data)
