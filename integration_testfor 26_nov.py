@@ -22,10 +22,10 @@ class TestJointStateSubscriberIntegration:
         rclpy.shutdown()
 
     def test_joint_state_subscriber_integration(self):
-        with rclpy.node.Node(name="test_node") as test_node:
+        with rclpy.node.Node(name="test_joint_state_subscriber") as test_node:
             subscriber_node = JointStateSubscriber()
 
-            # Modify the topic name to match the one published by the status publisher
+            # published by the status publisher
             arm_stowed_sub = test_node.create_subscription(
                 Bool,
                 "/arm_gripper_status/arm_stowed",
@@ -33,7 +33,7 @@ class TestJointStateSubscriberIntegration:
                 rclpy.qos.qos_profile_system_default,
             )
 
-            # Start the status publisher
+            # Starting status publisher
             with rclpy.node.Node(name="status_publisher") as status_publisher_node:
                 arm_stowed_pub = status_publisher_node.create_publisher(
                     Bool, "/arm_gripper_status/arm_stowed", 1
@@ -90,4 +90,3 @@ def generate_launch_description():
 
 if __name__ == "__main__":
     pytest.main(["-s"])
-
